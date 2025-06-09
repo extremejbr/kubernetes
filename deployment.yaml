@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-podname
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx-podname
+  template:
+    metadata:
+      labels:
+        app: nginx-podname
+    spec:
+      containers:
+      - name: nginx
+        image: extremejbr/nginx-envsubst
+        env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        volumeMounts:
+        - name: html-template
+          mountPath: /usr/share/nginx/html/index.template.html
+          subPath: index.html
+        command: ["/bin/sh", "-c"]
+        args:
+          - |
+            apk add --no-cache gettext && \
+            envsubst < /usr/share/nginx/html/index.template.html > /usr/share/nginx/html/index.html && \
+            nginx -g 'daemon off;'
+      volumes:
+      - name: html-template
+        configMap:
+          name: nginx-html-pod

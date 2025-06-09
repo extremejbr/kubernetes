@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-html-pod
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html>
+    <head><title>Nome do Pod</title></head>
+    <body>
+      <h1>Este Pod é: ${POD_NAME}</h1>
+    </body>
+    </html>
